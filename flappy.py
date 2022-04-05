@@ -14,6 +14,8 @@ class Bird(pygame.sprite.Sprite):
         #chama a imagem e converte os pixels transparentes (convert_alpha)
         self.image = pygame.image.load('F:/flappy_bird_python/sprites/bluebird-midflap.png').convert_alpha()
         self.rect = self.image.get_rect() #define a posição na tela
+        self.rect[0] = SCREEN_WIDTH / 2
+        self.rect[1] = SCREEN_HEIGHT / 2
         print(self.rect) 
     
     def update(self):
