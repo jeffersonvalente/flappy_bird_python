@@ -11,15 +11,23 @@ class Bird(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         
+        #dicionario das imagens
+        self.images = [pygame.image.load('F:/flappy_bird_python/sprites/bluebird-upflap.png',).convert_alpha(),
+                       pygame.image.load('F:/flappy_bird_python/sprites/bluebird-midflap.png',).convert_alpha(),
+                       pygame.image.load('F:/flappy_bird_python/sprites/bluebird-downflap.png').convert_alpha()]
+        
+        self.current_image = 0
+        
         #chama a imagem e converte os pixels transparentes (convert_alpha)
-        self.image = pygame.image.load('F:/flappy_bird_python/sprites/bluebird-midflap.png').convert_alpha()
+        self.image = pygame.image.load('F:/flappy_bird_python/sprites/bluebird-upflap.png').convert_alpha()
         self.rect = self.image.get_rect() #define a posição na tela
         self.rect[0] = SCREEN_WIDTH / 2
         self.rect[1] = SCREEN_HEIGHT / 2
         print(self.rect) 
     
     def update(self):
-        pass
+       self.current_image = (self.current_image + 1) % 3
+       self.image = self.images[ self.current_image ]
 
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -33,9 +41,12 @@ bird_group = pygame.sprite.Group()
 bird = Bird()
 bird_group.add(bird)
 
+clock = pygame.time.Clock() #define o fps/velocidade do bate asa
+
+
 #cria laço principal do jogo
 while True:
-    
+    clock.tick(15)
 #testa os eventos do game    
     for event in pygame.event.get():
         if event.type == QUIT:
