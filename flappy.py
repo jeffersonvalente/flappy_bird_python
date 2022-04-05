@@ -4,6 +4,8 @@ from pygame.locals import *
 #define tamanho da tela
 SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 800
+SPEED = 10
+GRAVITY = 1
 
 #cria o passarinho
 class Bird(pygame.sprite.Sprite):
@@ -18,6 +20,8 @@ class Bird(pygame.sprite.Sprite):
         
         self.current_image = 0
         
+        self.speed = SPEED
+        
         #chama a imagem e converte os pixels transparentes (convert_alpha)
         self.image = pygame.image.load('F:/flappy_bird_python/sprites/bluebird-upflap.png').convert_alpha()
         self.rect = self.image.get_rect() #define a posição na tela
@@ -25,9 +29,19 @@ class Bird(pygame.sprite.Sprite):
         self.rect[1] = SCREEN_HEIGHT / 2
         print(self.rect) 
     
-    def update(self):
+    def update(self): #função para os estados da imagem
        self.current_image = (self.current_image + 1) % 3
        self.image = self.images[ self.current_image ]
+       
+       #UPDATE HEIGHT
+       self.rect[1] += self.speed #passaro cai
+       
+       self.speed += GRAVITY
+       
+    def bump(self):
+        self.speed = -SPEED #passaro sobe
+        
+        
 
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -46,11 +60,15 @@ clock = pygame.time.Clock() #define o fps/velocidade do bate asa
 
 #cria laço principal do jogo
 while True:
-    clock.tick(15)
+    clock.tick(30)
 #testa os eventos do game    
     for event in pygame.event.get():
         if event.type == QUIT:
             pygame.quit()
+            
+        if event.type == KEYDOWN:
+            if event.key == K_SPACE:
+                bird.bump()
             
 #cria o backgound na tela.
     screen.blit(BACKGROUND, (0,0)) #os zeros indicam a posição no canto da tela
