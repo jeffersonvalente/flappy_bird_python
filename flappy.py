@@ -22,12 +22,17 @@ class Bird(pygame.sprite.Sprite):
                        pygame.image.load('F:/flappy_bird_python/sprites/bluebird-midflap.png',).convert_alpha(),
                        pygame.image.load('F:/flappy_bird_python/sprites/bluebird-downflap.png').convert_alpha()]
         
+        self.speed = SPEED
+        
+        
         self.current_image = 0
         
-        self.speed = SPEED
+        
         
         #chama a imagem e converte os pixels transparentes (convert_alpha)
         self.image = pygame.image.load('F:/flappy_bird_python/sprites/bluebird-upflap.png').convert_alpha()
+        self.mask = pygame.mask.from_surface(self.image) #mascara de colisão
+        
         self.rect = self.image.get_rect() #define a posição na tela
         self.rect[0] = SCREEN_WIDTH / 2
         self.rect[1] = SCREEN_HEIGHT / 2
@@ -36,6 +41,8 @@ class Bird(pygame.sprite.Sprite):
     def update(self): #função para os estados da imagem
        self.current_image = (self.current_image + 1) % 3
        self.image = self.images[ self.current_image ]
+       
+       self.mask = pygame.mask.from_surface(self.image) #mascara de colisão
        
        #UPDATE HEIGHT
        self.rect[1] += self.speed #passaro cai
@@ -50,7 +57,7 @@ class Ground(pygame.sprite.Sprite): #cria a base/chao
     def __init__(self, xpos):
         pygame.sprite.Sprite.__init__(self)
         
-        self.image = pygame.image.load('F:/flappy_bird_python/sprites/base.png')
+        self.image = pygame.image.load('F:/flappy_bird_python/sprites/base.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (GROUND_WIDTH, GROUND_HEIGHT))
      
         self.rect = self.image.get_rect()
@@ -115,8 +122,7 @@ while True:
     ground_group.draw(screen)
     
     #criando colisão
-    if pygame.sprite.groupcollide(bird_group, ground_group, False, False):
-        pygame.display.update()
+    if pygame.sprite.groupcollide(bird_group, ground_group, False, False, pygame.sprite.collide_mask):
         input()
         break
     
