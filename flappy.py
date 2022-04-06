@@ -6,6 +6,7 @@ SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 800
 SPEED = 10
 GRAVITY = 1
+GAMESPEED = 10
 
 #cria o passarinho
 class Bird(pygame.sprite.Sprite):
@@ -41,7 +42,19 @@ class Bird(pygame.sprite.Sprite):
     def bump(self):
         self.speed = -SPEED #passaro sobe
         
+class Ground(pygame.sprite.Sprite): #cria a base/chao
+    
+    def __init__(self, width, heigth):
+        pygame.sprite.Sprite.__init__(self)
         
+        self.image = pygame.image.load('F:/flappy_bird_python/sprites/base.png')
+        self.image = pygame.transform.scale(self.image, (width, heigth))
+     
+        self.rect = self.image.get_rect()
+        self.rect[1] = SCREEN_HEIGHT - heigth
+        
+    def update(self):
+        self.rect[0] -= GAMESPEED
 
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -54,6 +67,11 @@ BACKGROUND = pygame.transform.scale(BACKGROUND, (SCREEN_WIDTH, SCREEN_HEIGHT))
 bird_group = pygame.sprite.Group()
 bird = Bird()
 bird_group.add(bird)
+
+#adiciona o grupo do chao
+ground_group = pygame.sprite.Group()
+ground = Ground(2 * SCREEN_WIDTH , 100)
+ground_group.add(ground)
 
 clock = pygame.time.Clock() #define o fps/velocidade do bate asa
 
@@ -74,8 +92,9 @@ while True:
     screen.blit(BACKGROUND, (0,0)) #os zeros indicam a posição no canto da tela
     
     bird_group.update() #muda opassarinho conforme o game
-    
+    ground_group.update()
     #desenha os elementos do grupo bird
     bird_group.draw(screen)
+    ground_group.draw(screen)
     
     pygame.display.update()
