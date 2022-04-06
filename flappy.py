@@ -8,6 +8,9 @@ SPEED = 10
 GRAVITY = 1
 GAMESPEED = 10
 
+GROUND_WIDTH = 2 * SCREEN_WIDTH
+GROUND_HEIGHT = 100
+
 #cria o passarinho
 class Bird(pygame.sprite.Sprite):
     
@@ -44,17 +47,21 @@ class Bird(pygame.sprite.Sprite):
         
 class Ground(pygame.sprite.Sprite): #cria a base/chao
     
-    def __init__(self, width, heigth):
+    def __init__(self, xpos):
         pygame.sprite.Sprite.__init__(self)
         
         self.image = pygame.image.load('F:/flappy_bird_python/sprites/base.png')
-        self.image = pygame.transform.scale(self.image, (width, heigth))
+        self.image = pygame.transform.scale(self.image, (GROUND_WIDTH, GROUND_HEIGHT))
      
         self.rect = self.image.get_rect()
-        self.rect[1] = SCREEN_HEIGHT - heigth
+        self.rect[0] = xpos
+        self.rect[1] = SCREEN_HEIGHT - GROUND_HEIGHT
         
     def update(self):
         self.rect[0] -= GAMESPEED
+
+def is_off_screen(sprite):
+    return sprite.rect[0] < -(sprite.rect[2])
 
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -70,8 +77,9 @@ bird_group.add(bird)
 
 #adiciona o grupo do chao
 ground_group = pygame.sprite.Group()
-ground = Ground(2 * SCREEN_WIDTH , 100)
-ground_group.add(ground)
+for i in range(2):
+    ground = Ground(GROUND_WIDTH * i )
+    ground_group.add(ground)
 
 clock = pygame.time.Clock() #define o fps/velocidade do bate asa
 
@@ -91,10 +99,19 @@ while True:
 #cria o backgound na tela.
     screen.blit(BACKGROUND, (0,0)) #os zeros indicam a posição no canto da tela
     
+    #valida se o ground está em tela ainda e remove
+    if is_off_screen(ground_group.sprites()[0]):
+        ground_group.remove(ground_group.sprites()[0])
+        
+        new_ground = Ground(GROUND_WIDTH - 20)
+        ground_group.add(new_ground)
+        
     bird_group.update() #muda opassarinho conforme o game
     ground_group.update()
+    
     #desenha os elementos do grupo bird
     bird_group.draw(screen)
+    #desenha os elementos do grupo ground
     ground_group.draw(screen)
     
     pygame.display.update()
