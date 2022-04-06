@@ -114,4 +114,10 @@ while True:
     #desenha os elementos do grupo ground
     ground_group.draw(screen)
     
+    #criando colisão
+    if pygame.sprite.groupcollide(bird_group, ground_group, False, False):
+        pygame.display.update()
+        input()
+        break
+    
     pygame.display.update()
